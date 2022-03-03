@@ -38,8 +38,8 @@ coords coords::operator -(coords const &x0) const
 void coords::print_mono(FILE *file)
 {
   if( file==NULL ){
-    // cout<<x<<" "<<y<<" "<<z<<endl;
-    cout<<r<<" "<<theta<<" "<<phi<<endl;
+    cout<<x<<" "<<y<<" "<<z<<endl;
+    // cout<<r<<" "<<theta<<" "<<phi<<endl;
   }
   else{
     fprintf(file,"%d %d %d\n",x,y,z);
@@ -60,10 +60,13 @@ coords min_distance(coords const &x1,coords const &x0){
 }
 
 vector<double> prepare_naive_histo(vector<coords> distances){
-  vector<double> res((NL-1)*(NL-1)*(NL-1),0);
-  double factor = (distances.size())/(double)res.size();
+  vector<double> res((NL)*(NL)*(NL),0);
+
+  double factor = (distances.size())/(double)( (NL-1)*(NL-1)*(NL-1) );//res.size();
+
   for (auto &a : distances)
       res[cartdist_to_lexhhh(a.x,a.y,a.z)]+=1.0;
+
   for (auto &a : res)
       a/=factor;
   return res;
@@ -73,20 +76,29 @@ vector<double> prepare_naive_histo(vector<coords> distances){
 vector<vector<double>> prepare_mean_naive_histo(vector<vector<coords>> distances, bool comp_err=0)
 {
   vector<vector<double>> res;
-  vector<double> res_c((NL-1)*(NL-1)*(NL-1),0);
-  double factor = double(distances.size());
+
+  size_t dim=(NL)*(NL)*(NL);
+  vector<double> res_c(dim,0);
   
-  for (auto &a : distances)
+  double factor = double(distances.size());
+
+  vector<vector<double>> tmp;
+  
+  for(auto &a : distances)
     {
-      vector<double> tmp = prepare_naive_histo(a);
-      for(int i=0;i<res_c.size();i++)
-	  res_c[i]+=tmp[i];
+    tmp.push_back( prepare_naive_histo(a) );
     }
-  for (auto &a : res_c)
-      a/=factor;
+  cout<<"ciao"<<endl;
+  for(auto &a : tmp)
+    for(size_t i=0;i<dim;i++)
+      res_c[i]+=a[i];
+
+  
+  for(auto &a : res_c)
+    a/=factor;
+
   res.push_back(res_c);
   res_c.clear();
-  
   if(comp_err)
     {
       for (auto &a : distances)
@@ -99,7 +111,7 @@ vector<vector<double>> prepare_mean_naive_histo(vector<vector<coords>> distances
 	  a=sqrt(a)/factor;
       res.push_back(res_c);
     } 
-
+  cout<<"\t2"<<endl;
   return res;
 }
 

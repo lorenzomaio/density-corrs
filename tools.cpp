@@ -23,7 +23,16 @@ long int cartdist_to_lexhhh(int x, int y, int z){
   int lex;
   
   if(abs(x) < NL/2 && abs(y) < NL/2 && abs(z) < NL/2)
+    {
       lex = (NL/2-1+x) + NL*(NL/2-1+y) + NL*NL*(NL/2-1+z);
+      if(lex>(NL)*(NL)*(NL))
+	{
+	  std::cerr<<"ERROR: lexicographic coordinates out of range "
+		   <<"(File: \""<<__FILE__ <<"\" Line: "<<__LINE__<<")"
+		   <<std::endl;
+	  exit(1);
+	} 
+    }
   else
     {
       std::cerr<<"ERROR: cartesian coordinates out of range "

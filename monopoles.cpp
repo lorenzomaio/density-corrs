@@ -66,9 +66,9 @@ vector<vector<monopole>> allmono_from_all_confs(string filename)
 	  continue;
 	}
 
-      int subg,type,pos[3];
+      int subg,type,timeslice,pos[3];
       stringstream stream(line);
-      
+      stream>>timeslice;
       for(int i = 0; i <3; i++)
 	  stream>>pos[i];
       stream>>subg;
@@ -76,7 +76,6 @@ vector<vector<monopole>> allmono_from_all_confs(string filename)
 
       monopole tmp(pos[0],pos[1],pos[2],subg,type);
       mc.push_back(tmp);
-            
     }
   sort(mc.begin(),mc.end());
   res.push_back(mc);
